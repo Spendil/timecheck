@@ -1334,4 +1334,4 @@ export default async function timeChart(dataSource, options, selector) {
 	}
   }
 
-window.renderTimeChart = timeChart
+window.timeChartRenderer = timeChart
