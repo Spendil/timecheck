@@ -3,7 +3,7 @@ import * as _ from 'lodash'
 import moment from 'moment'
 import formatNumber from './util/formatNumber'
 
-export default function timeChart(dataSource, options, selector) {
+export default async function timeChart(dataSource, options, selector) {
 	dataSource = _.cloneDeep(dataSource)
   
 	const margin = { top: 10, right: 50, bottom: 40, left: 100 },
@@ -16,7 +16,15 @@ export default function timeChart(dataSource, options, selector) {
 		margin.top -
 		margin.bottom
   
-	const data = dataSource.values
+	let values = undefined
+	if (!dataSource.values) {
+		const data = await dataSource.fetcher()
+		const json = await data.json()
+		values = dataSource.setupData(json)
+	} else {
+		values = dataSource.values
+	}
+	const data = values
 	let cfg = {
 		chartType: options.chartType,
 		xField: options.x.field,
