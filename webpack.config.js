@@ -11,7 +11,7 @@ module.exports = {
   mode: 'production',
 
   entry: {
-    main: './src/index.js',
+    main: './timeChartRenderer.js',
   },
 
   output: {

@@ -1,7 +1,7 @@
 import * as d3 from 'd3'
 import * as _ from 'lodash'
 import moment from 'moment'
-import formatNumber from '../util/formatNumber'
+import formatNumber from './util/formatNumber'
 
 export default function timeChart(dataSource, options, selector) {
 	dataSource = _.cloneDeep(dataSource)
