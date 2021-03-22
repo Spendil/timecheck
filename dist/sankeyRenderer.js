@@ -26588,6 +26588,8 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToAr
 
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
+function sankeyRenderer_typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { sankeyRenderer_typeof = function _typeof(obj) { return typeof obj; }; } else { sankeyRenderer_typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return sankeyRenderer_typeof(obj); }
+
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
@@ -26652,7 +26654,7 @@ function _sankeyRenderer() {
             return _context.abrupt("return");
 
           case 20:
-            queryVariables = JSON.parse(dataSource.variables);
+            queryVariables = sankeyRenderer_typeof(dataSource.variables) === 'object' ? dataSource.variables : JSON.parse(dataSource.variables);
             currency = values.inbound && values.inbound.length > 0 && values.inbound[0].currency.symbol || values.outbound && values.outbound.length > 0 && values.outbound[0].currency.symbol;
             jqContainer.addClass('graph');
 
