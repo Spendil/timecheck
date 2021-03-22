@@ -29,15 +29,14 @@ var __WEBPACK_AMD_DEFINE_RESULT__;/**
   var undefined;
 
   /** Used as the semantic version number. */
-  var VERSION = '4.17.21';
+  var VERSION = '4.17.20';
 
   /** Used as the size to enable large array optimizations. */
   var LARGE_ARRAY_SIZE = 200;
 
   /** Error message constants. */
   var CORE_ERROR_TEXT = 'Unsupported core-js use. Try https://npms.io/search?q=ponyfill.',
-      FUNC_ERROR_TEXT = 'Expected a function',
-      INVALID_TEMPL_VAR_ERROR_TEXT = 'Invalid `variable` option passed into `_.template`';
+      FUNC_ERROR_TEXT = 'Expected a function';
 
   /** Used to stand-in for `undefined` hash values. */
   var HASH_UNDEFINED = '__lodash_hash_undefined__';
@@ -170,11 +169,10 @@ var __WEBPACK_AMD_DEFINE_RESULT__;/**
   var reRegExpChar = /[\\^$.*+?()[\]{}|]/g,
       reHasRegExpChar = RegExp(reRegExpChar.source);
 
-  /** Used to match leading whitespace. */
-  var reTrimStart = /^\s+/;
-
-  /** Used to match a single whitespace character. */
-  var reWhitespace = /\s/;
+  /** Used to match leading and trailing whitespace. */
+  var reTrim = /^\s+|\s+$/g,
+      reTrimStart = /^\s+/,
+      reTrimEnd = /\s+$/;
 
   /** Used to match wrap detail comments. */
   var reWrapComment = /\{(?:\n\/\* \[wrapped with .+\] \*\/)?\n?/,
@@ -183,18 +181,6 @@ var __WEBPACK_AMD_DEFINE_RESULT__;/**
 
   /** Used to match words composed of alphanumeric characters. */
   var reAsciiWord = /[^\x00-\x2f\x3a-\x40\x5b-\x60\x7b-\x7f]+/g;
-
-  /**
-   * Used to validate the `validate` option in `_.template` variable.
-   *
-   * Forbids characters which could potentially change the meaning of the function argument definition:
-   * - "()," (modification of function parameters)
-   * - "=" (default value)
-   * - "[]{}" (destructuring of function parameters)
-   * - "/" (beginning of a comment)
-   * - whitespace
-   */
-  var reForbiddenIdentifierChars = /[()=,{}\[\]\/\s]/;
 
   /** Used to match backslashes in property paths. */
   var reEscapeChar = /\\(\\)?/g;
@@ -1025,19 +1011,6 @@ var __WEBPACK_AMD_DEFINE_RESULT__;/**
   }
 
   /**
-   * The base implementation of `_.trim`.
-   *
-   * @private
-   * @param {string} string The string to trim.
-   * @returns {string} Returns the trimmed string.
-   */
-  function baseTrim(string) {
-    return string
-      ? string.slice(0, trimmedEndIndex(string) + 1).replace(reTrimStart, '')
-      : string;
-  }
-
-  /**
    * The base implementation of `_.unary` without support for storing metadata.
    *
    * @private
@@ -1368,21 +1341,6 @@ var __WEBPACK_AMD_DEFINE_RESULT__;/**
     return hasUnicode(string)
       ? unicodeToArray(string)
       : asciiToArray(string);
-  }
-
-  /**
-   * Used by `_.trim` and `_.trimEnd` to get the index of the last non-whitespace
-   * character of `string`.
-   *
-   * @private
-   * @param {string} string The string to inspect.
-   * @returns {number} Returns the index of the last non-whitespace character.
-   */
-  function trimmedEndIndex(string) {
-    var index = string.length;
-
-    while (index-- && reWhitespace.test(string.charAt(index))) {}
-    return index;
   }
 
   /**
@@ -12553,7 +12511,7 @@ var __WEBPACK_AMD_DEFINE_RESULT__;/**
       if (typeof value != 'string') {
         return value === 0 ? value : +value;
       }
-      value = baseTrim(value);
+      value = value.replace(reTrim, '');
       var isBinary = reIsBinary.test(value);
       return (isBinary || reIsOctal.test(value))
         ? freeParseInt(value.slice(2), isBinary ? 2 : 8)
@@ -14925,12 +14883,6 @@ var __WEBPACK_AMD_DEFINE_RESULT__;/**
       if (!variable) {
         source = 'with (obj) {\n' + source + '\n}\n';
       }
-      // Throw an error if a forbidden character was found in `variable`, to prevent
-      // potential command injection attacks.
-      else if (reForbiddenIdentifierChars.test(variable)) {
-        throw new Error(INVALID_TEMPL_VAR_ERROR_TEXT);
-      }
-
       // Cleanup code by stripping empty strings.
       source = (isEvaluating ? source.replace(reEmptyStringLeading, '') : source)
         .replace(reEmptyStringMiddle, '$1')
@@ -15044,7 +14996,7 @@ var __WEBPACK_AMD_DEFINE_RESULT__;/**
     function trim(string, chars, guard) {
       string = toString(string);
       if (string && (guard || chars === undefined)) {
-        return baseTrim(string);
+        return string.replace(reTrim, '');
       }
       if (!string || !(chars = baseToString(chars))) {
         return string;
@@ -15079,7 +15031,7 @@ var __WEBPACK_AMD_DEFINE_RESULT__;/**
     function trimEnd(string, chars, guard) {
       string = toString(string);
       if (string && (guard || chars === undefined)) {
-        return string.slice(0, trimmedEndIndex(string) + 1);
+        return string.replace(reTrimEnd, '');
       }
       if (!string || !(chars = baseToString(chars))) {
         return string;
@@ -38241,115 +38193,23 @@ webpackContext.id = 6700;
 })));
 
 
-/***/ })
+/***/ }),
 
-/******/ 	});
-/************************************************************************/
-/******/ 	// The module cache
-/******/ 	var __webpack_module_cache__ = {};
-/******/ 	
-/******/ 	// The require function
-/******/ 	function __webpack_require__(moduleId) {
-/******/ 		// Check if module is in cache
-/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
-/******/ 		if (cachedModule !== undefined) {
-/******/ 			return cachedModule.exports;
-/******/ 		}
-/******/ 		// Create a new module (and put it into the cache)
-/******/ 		var module = __webpack_module_cache__[moduleId] = {
-/******/ 			id: moduleId,
-/******/ 			loaded: false,
-/******/ 			exports: {}
-/******/ 		};
-/******/ 	
-/******/ 		// Execute the module function
-/******/ 		__webpack_modules__[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-/******/ 	
-/******/ 		// Flag the module as loaded
-/******/ 		module.loaded = true;
-/******/ 	
-/******/ 		// Return the exports of the module
-/******/ 		return module.exports;
-/******/ 	}
-/******/ 	
-/************************************************************************/
-/******/ 	/* webpack/runtime/compat get default export */
-/******/ 	(() => {
-/******/ 		// getDefaultExport function for compatibility with non-harmony modules
-/******/ 		__webpack_require__.n = (module) => {
-/******/ 			var getter = module && module.__esModule ?
-/******/ 				() => (module['default']) :
-/******/ 				() => (module);
-/******/ 			__webpack_require__.d(getter, { a: getter });
-/******/ 			return getter;
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/define property getters */
-/******/ 	(() => {
-/******/ 		// define getter functions for harmony exports
-/******/ 		__webpack_require__.d = (exports, definition) => {
-/******/ 			for(var key in definition) {
-/******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
-/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
-/******/ 				}
-/******/ 			}
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/global */
-/******/ 	(() => {
-/******/ 		__webpack_require__.g = (function() {
-/******/ 			if (typeof globalThis === 'object') return globalThis;
-/******/ 			try {
-/******/ 				return this || new Function('return this')();
-/******/ 			} catch (e) {
-/******/ 				if (typeof window === 'object') return window;
-/******/ 			}
-/******/ 		})();
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
-/******/ 	(() => {
-/******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/make namespace object */
-/******/ 	(() => {
-/******/ 		// define __esModule on exports
-/******/ 		__webpack_require__.r = (exports) => {
-/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
-/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
-/******/ 			}
-/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/node module decorator */
-/******/ 	(() => {
-/******/ 		__webpack_require__.nmd = (module) => {
-/******/ 			module.paths = [];
-/******/ 			if (!module.children) module.children = [];
-/******/ 			return module;
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/************************************************************************/
-var __webpack_exports__ = {};
-// This entry need to be wrapped in an IIFE because it need to be in strict mode.
-(() => {
+/***/ 1792:
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
 "use strict";
 // ESM COMPAT FLAG
 __webpack_require__.r(__webpack_exports__);
 
 // EXPORTS
 __webpack_require__.d(__webpack_exports__, {
-  "default": () => (/* binding */ timeChart)
+  "default": () => /* binding */ timeChartRenderer
 });
 
 ;// CONCATENATED MODULE: ./node_modules/d3/dist/package.js
 var package_name = "d3";
-var version = "6.6.0";
+var version = "6.5.0";
 var description = "Data-Driven Documents";
 var keywords = (/* unused pure expression or super */ null && (["dom","visualization","svg","animation","canvas"]));
 var homepage = "https://d3js.org";
@@ -38451,10 +38311,10 @@ function ascendingComparator(f) {
 
 ;// CONCATENATED MODULE: ./node_modules/internmap/src/index.js
 class InternMap extends Map {
-  constructor(entries, key = keyof) {
+  constructor(entries = [], key = keyof) {
     super();
     Object.defineProperties(this, {_intern: {value: new Map()}, _key: {value: key}});
-    if (entries != null) for (const [key, value] of entries) this.set(key, value);
+    for (const [key, value] of entries) this.set(key, value);
   }
   get(key) {
     return super.get(intern_get(this, key));
@@ -38471,10 +38331,10 @@ class InternMap extends Map {
 }
 
 class InternSet extends Set {
-  constructor(values, key = keyof) {
+  constructor(values = [], key = keyof) {
     super();
     Object.defineProperties(this, {_intern: {value: new Map()}, _key: {value: key}});
-    if (values != null) for (const value of values) this.add(value);
+    for (const value of values) this.add(value);
   }
   has(value) {
     return super.has(intern_get(this, value));
@@ -38688,21 +38548,23 @@ var axis_top = 1,
     epsilon = 1e-6;
 
 function translateX(x) {
-  return "translate(" + x + ",0)";
+  return "translate(" + (x + 0.5) + ",0)";
 }
 
 function translateY(y) {
-  return "translate(0," + y + ")";
+  return "translate(0," + (y + 0.5) + ")";
 }
 
 function number(scale) {
   return d => +scale(d);
 }
 
-function center(scale, offset) {
-  offset = Math.max(0, scale.bandwidth() - offset * 2) / 2;
+function center(scale) {
+  var offset = Math.max(0, scale.bandwidth() - 1) / 2; // Adjust for 0.5px offset.
   if (scale.round()) offset = Math.round(offset);
-  return d => +scale(d) + offset;
+  return function(d) {
+    return +scale(d) + offset;
+  };
 }
 
 function entering() {
@@ -38716,7 +38578,6 @@ function axis(orient, scale) {
       tickSizeInner = 6,
       tickSizeOuter = 6,
       tickPadding = 3,
-      offset = typeof window !== "undefined" && window.devicePixelRatio > 1 ? 0 : 0.5,
       k = orient === axis_top || orient === left ? -1 : 1,
       x = orient === left || orient === right ? "x" : "y",
       transform = orient === axis_top || orient === bottom ? translateX : translateY;
@@ -38726,9 +38587,9 @@ function axis(orient, scale) {
         format = tickFormat == null ? (scale.tickFormat ? scale.tickFormat.apply(scale, tickArguments) : d3_axis_src_identity) : tickFormat,
         spacing = Math.max(tickSizeInner, 0) + tickPadding,
         range = scale.range(),
-        range0 = +range[0] + offset,
-        range1 = +range[range.length - 1] + offset,
-        position = (scale.bandwidth ? center : number)(scale.copy(), offset),
+        range0 = +range[0] + 0.5,
+        range1 = +range[range.length - 1] + 0.5,
+        position = (scale.bandwidth ? center : number)(scale.copy()),
         selection = context.selection ? context.selection() : context,
         path = selection.selectAll(".domain").data([null]),
         tick = selection.selectAll(".tick").data(values, scale).order(),
@@ -38760,23 +38621,23 @@ function axis(orient, scale) {
 
       tickExit = tickExit.transition(context)
           .attr("opacity", epsilon)
-          .attr("transform", function(d) { return isFinite(d = position(d)) ? transform(d + offset) : this.getAttribute("transform"); });
+          .attr("transform", function(d) { return isFinite(d = position(d)) ? transform(d) : this.getAttribute("transform"); });
 
       tickEnter
           .attr("opacity", epsilon)
-          .attr("transform", function(d) { var p = this.parentNode.__axis; return transform((p && isFinite(p = p(d)) ? p : position(d)) + offset); });
+          .attr("transform", function(d) { var p = this.parentNode.__axis; return transform(p && isFinite(p = p(d)) ? p : position(d)); });
     }
 
     tickExit.remove();
 
     path
-        .attr("d", orient === left || orient === right
-            ? (tickSizeOuter ? "M" + k * tickSizeOuter + "," + range0 + "H" + offset + "V" + range1 + "H" + k * tickSizeOuter : "M" + offset + "," + range0 + "V" + range1)
-            : (tickSizeOuter ? "M" + range0 + "," + k * tickSizeOuter + "V" + offset + "H" + range1 + "V" + k * tickSizeOuter : "M" + range0 + "," + offset + "H" + range1));
+        .attr("d", orient === left || orient == right
+            ? (tickSizeOuter ? "M" + k * tickSizeOuter + "," + range0 + "H0.5V" + range1 + "H" + k * tickSizeOuter : "M0.5," + range0 + "V" + range1)
+            : (tickSizeOuter ? "M" + range0 + "," + k * tickSizeOuter + "V0.5H" + range1 + "V" + k * tickSizeOuter : "M" + range0 + ",0.5H" + range1));
 
     tick
         .attr("opacity", 1)
-        .attr("transform", function(d) { return transform(position(d) + offset); });
+        .attr("transform", function(d) { return transform(position(d)); });
 
     line
         .attr(x + "2", k * tickSizeInner);
@@ -38829,10 +38690,6 @@ function axis(orient, scale) {
 
   axis.tickPadding = function(_) {
     return arguments.length ? (tickPadding = +_, axis) : tickPadding;
-  };
-
-  axis.offset = function(_) {
-    return arguments.length ? (offset = +_, axis) : offset;
   };
 
   return axis;
@@ -40016,7 +39873,7 @@ function yesdrag(view, noclick) {
 }
 
 ;// CONCATENATED MODULE: ./node_modules/d3-color/src/define.js
-/* harmony default export */ function src_define(constructor, factory, prototype) {
+/* harmony default export */ function define(constructor, factory, prototype) {
   constructor.prototype = factory.prototype = prototype;
   prototype.constructor = constructor;
 }
@@ -40197,7 +40054,7 @@ var named = {
   yellowgreen: 0x9acd32
 };
 
-src_define(Color, color, {
+define(Color, color, {
   copy: function(channels) {
     return Object.assign(new this.constructor, this, channels);
   },
@@ -40269,7 +40126,7 @@ function Rgb(r, g, b, opacity) {
   this.opacity = +opacity;
 }
 
-src_define(Rgb, color_rgb, extend(Color, {
+define(Rgb, color_rgb, extend(Color, {
   brighter: function(k) {
     k = k == null ? brighter : Math.pow(brighter, k);
     return new Rgb(this.r * k, this.g * k, this.b * k, this.opacity);
@@ -40355,7 +40212,7 @@ function Hsl(h, s, l, opacity) {
   this.opacity = +opacity;
 }
 
-src_define(Hsl, hsl, extend(Color, {
+define(Hsl, hsl, extend(Color, {
   brighter: function(k) {
     k = k == null ? brighter : Math.pow(brighter, k);
     return new Hsl(this.h, this.s, this.l * k, this.opacity);
@@ -45225,7 +45082,6 @@ function stackSeries(key) {
 
 
 
-
 ;// CONCATENATED MODULE: ./node_modules/d3-time/src/index.js
 
 
@@ -45807,32 +45663,31 @@ var lodash = __webpack_require__(6486);
 // EXTERNAL MODULE: ./node_modules/moment/moment.js
 var moment = __webpack_require__(381);
 var moment_default = /*#__PURE__*/__webpack_require__.n(moment);
-;// CONCATENATED MODULE: ./util/formatNumber.js
+;// CONCATENATED MODULE: ./src/util/formatNumber.js
 function formatNumber(num) {
-	// num = num.toFixed(2)
-	// return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
-	return num
+  // num = num.toFixed(2)
+  // return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+  return num;
 }
-
-;// CONCATENATED MODULE: ./timeChartRenderer.js
-
+;// CONCATENATED MODULE: ./src/reactComponents/timeChartRenderer.js
 
 
 
 
-async function timeChart(dataSource, options, selector) {
+
+async function timeChartRenderer(dataSource, options, selector) {
 	dataSource = lodash.cloneDeep(dataSource)
-  
+
 	const margin = { top: 10, right: 50, bottom: 40, left: 100 },
-	  width =
-		src_select(`#${selector}`).node().getBoundingClientRect().width -
-		margin.left -
-		margin.right,
-	  height =
-		src_select(`#${selector}`).node().getBoundingClientRect().height -
-		margin.top -
-		margin.bottom
-  
+		width =
+			src_select(`#${selector}`).node().getBoundingClientRect().width -
+			margin.left -
+			margin.right,
+		height =
+			src_select(`#${selector}`).node().getBoundingClientRect().height -
+			margin.top -
+			margin.bottom
+
 	let values = undefined
 	if (!dataSource.values) {
 		const data = await dataSource.fetcher()
@@ -45842,1293 +45697,1382 @@ async function timeChart(dataSource, options, selector) {
 		values = dataSource.values
 	}
 	const data = values
-	let cfg = {
-		chartType: options.chartType,
-		xField: options.x.field,
-		yField: options.y.field,
-		subgroupField: options.subgroupField,
-	}
-	const pathToDate = cfg.xField
-	const pathToYField = cfg.yField
-  
-	data.forEach((d) => {
-	  d.date = new Date(moment_default()(lodash.get(d, pathToDate)))
-	})
-  
-	let dt = {
-	  ms:
-		(data[data.length - 1].date - data[0].date) /
-		(data.length > 2 ? data.length - 2 : data.length),
-	  s:
-		(data[data.length - 1].date - data[0].date) /
-		(data.length > 2 ? data.length - 2 : data.length) /
-		1000,
-	  min:
-		(data[data.length - 1].date - data[0].date) /
-		(data.length > 2 ? data.length - 2 : data.length) /
-		(1000 * 60),
-	  h:
-		(data[data.length - 1].date - data[0].date) /
-		(data.length > 2 ? data.length - 2 : data.length) /
-		(1000 * 60 * 60),
-	  d:
-		(data[data.length - 1].date - data[0].date) /
-		(data.length > 2 ? data.length - 2 : data.length) /
-		(1000 * 60 * 60 * 24),
-	  m:
-		(data[data.length - 1].date - data[0].date) /
-		(data.length > 2 ? data.length - 2 : data.length) /
-		(1000 * 60 * 60 * 24 * 30),
-	  y:
-		(data[data.length - 1].date - data[0].date) /
-		(data.length > 2 ? data.length - 2 : data.length) /
-		(1000 * 60 * 60 * 24 * 365),
-	}
-  
-	let tickByNumber =
-	  dt.s < 1
-		? 0
-		: dt.min < 1
-		? 1
-		: dt.hour < 1
-		? 2
-		: dt.d < 1
-		? 3
-		: dt.m < 1
-		? 4
-		: dt.y < 1
-		? 5
-		: 6
-  
-	const tickBy = [
-	  src_millisecond,
-	  src_second,
-	  src_minute,
-	  src_hour,
-	  src_day,
-	  src_month,
-	  src_year,
-	]
-  
-	src_select(`#${selector}`).html('')
-  
-	switch (cfg.chartType) {
-	  case 'Bar':
-		bar()
-		break
-  
-	  case 'Line':
-		line()
-		break
-  
-	  case 'Scatter':
-		scatter()
-		break
-  
-	  case 'Stacked Bar':
-		stackedBar()
-		break
-  
-	  default:
-		break
-	}
-  
-	function bar() {
-	  let svg = src_select(`#${selector}`)
-		.append('svg')
-		.attr('width', width + margin.left + margin.right)
-		.attr('height', height + margin.top + margin.bottom)
-		.append('g')
-		.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
-  
-	  const x = band()
-		.domain(
-		  data.map(function (d) {
-			return d.date
-		  })
-		)
-		.range([0, width])
-		.paddingInner(0.1)
-  
-	  const y = linear_linear()
-		.domain([
-		  0,
-		  max_max(data, function (d) {
-			return lodash.get(d, pathToYField)
-		  }),
-		])
-		.range([height, 0])
-		.nice()
-	  const xAxis = axisBottom(x)
-		.tickSize(-height)
-		.tickValues(
-		  data
-			.map((d, i) =>
-			  i % (Math.round(data.length / 5) + 1) == 0 ? d.date : null
-			)
-			.filter((d) => !!d)
-		)
-		.tickFormat((date) => {
-		  return tickByNumber == 6
-			? timeFormat('%Y')(date)
-			: tickByNumber == 5
-			? timeFormat('%m/%y')(date)
-			: tickByNumber == 4
-			? timeFormat('%d/%m/%y')(date)
-			: tickByNumber == 3
-			? timeFormat('%H %d%/%m/%y')(date)
-			: tickByNumber == 2
-			? timeFormat('%H:%M %d%/%m/%y')(date)
-			: timeFormat('%H:%M:%S %d%/%m/%y')(date)
+		let cfg = {
+			chartType: options.chartType,
+			xField: options.x.field,
+			yField: options.y.field,
+			subgroupField: options.subgroupField,
+		}
+		const pathToDate = cfg.xField
+		const pathToYField = cfg.yField
+
+		data.forEach((d) => {
+			d.date = new Date(moment_default()(lodash.get(d, pathToDate)))
 		})
-	  const yAxis = axisLeft(y).tickSize(-width)
-  
-	  const xAxisGrid = svg
-		.append('g')
-		.call(xAxis)
-		.attr('transform', 'translate(0,' + height + ')')
-	  xAxisGrid.selectAll('.tick text').attr('transform', 'translate(0, 5)')
-	  const yAxisGrid = svg.append('g').call(yAxis)
-	  yAxisGrid.selectAll('line').attr('class', 'y-axis-grid')
-  
-	  var clip = svg
-		.append('defs')
-		.append('svg:clipPath')
-		.attr('id', 'clip')
-		.append('svg:rect')
-		.attr('width', width)
-		.attr('height', height)
-		.attr('x', 0)
-		.attr('y', 0)
-  
-	  var brush = brushX()
-		.extent([
-		  [0, 0],
-		  [width, height],
-		])
-		.on('end', updateChart)
-	  svg.append('g').attr('class', 'brush').call(brush)
-  
-	  let bars = svg
-		.append('g')
-		.attr('clip-path', 'url(#clip)')
-		.attr('class', 'bars')
-	  bars
-		.selectAll('rect')
-		.data(data)
-		.enter()
-		.append('rect')
-		.attr('x', (d) => x(d.date))
-		.attr('width', x.bandwidth())
-		.attr('y', (d) => y(lodash.get(d, pathToYField)))
-		.attr('height', (d) => height - y(lodash.get(d, pathToYField)))
-		.attr('class', 'bar')
-		.attr('fill', '#28a745')
-		.on('mouseover', mouseover)
-		.on('mousemove', mousemove)
-		.on('mouseout', mouseout)
-  
-	  svg
-		.append('text')
-		.attr(
-		  'transform',
-		  'translate(' + width / 2 + ' ,' + (height + margin.top + 20) + ')'
-		)
-		.style('text-anchor', 'middle')
-		.style('font-size', '12')
-		.attr('font-family', 'Nunito, Arial, sans-serif')
-		.text(pathToDate)
-	  svg
-		.append('text')
-		.attr('transform', 'rotate(-90)')
-		.attr('y', 0 - margin.left)
-		.attr('x', 0 - height / 2)
-		.attr('dy', '1em')
-		.style('text-anchor', 'middle')
-		.attr('font-family', 'Nunito, Arial, sans-serif')
-		.style('font-size', '12')
-		.text(pathToYField)
-  
-	  const tooltip = src_select('body')
-		.append('div')
-		.attr('class', 'tooltip')
-		.style('display', 'none')
-	  function mouseover() {
-		src_select(this).attr('stroke', 'black').attr('stroke-width', 0.6)
-		tooltip.style('display', null).style('visibility', 'visible')
-	  }
-	  function mousemove(e, d) {
-		tooltip.html(
-		  `<ul>
-						  <li>Date: ${
-				tickByNumber == 6
-				  ? timeFormat('%Y')(d.date)
-				  : tickByNumber == 5
-				  ? timeFormat('%m/%y')(d.date)
-				  : tickByNumber == 4
-				  ? timeFormat('%d/%m/%y')(d.date)
-				  : tickByNumber == 3
-				  ? timeFormat('%H %d%/%m/%y')(d.date)
-				  : tickByNumber == 2
-				  ? timeFormat('%H:%M %d%/%m/%y')(d.date)
-				  : timeFormat('%H:%M:%S %d%/%m/%y')(d.date)
-			  }</li>
+
+		let dt = {
+			ms:
+				(data[data.length - 1].date - data[0].date) /
+				(data.length > 2 ? data.length - 2 : data.length),
+			s:
+				(data[data.length - 1].date - data[0].date) /
+				(data.length > 2 ? data.length - 2 : data.length) /
+				1000,
+			min:
+				(data[data.length - 1].date - data[0].date) /
+				(data.length > 2 ? data.length - 2 : data.length) /
+				(1000 * 60),
+			h:
+				(data[data.length - 1].date - data[0].date) /
+				(data.length > 2 ? data.length - 2 : data.length) /
+				(1000 * 60 * 60),
+			d:
+				(data[data.length - 1].date - data[0].date) /
+				(data.length > 2 ? data.length - 2 : data.length) /
+				(1000 * 60 * 60 * 24),
+			m:
+				(data[data.length - 1].date - data[0].date) /
+				(data.length > 2 ? data.length - 2 : data.length) /
+				(1000 * 60 * 60 * 24 * 30),
+			y:
+				(data[data.length - 1].date - data[0].date) /
+				(data.length > 2 ? data.length - 2 : data.length) /
+				(1000 * 60 * 60 * 24 * 365),
+		}
+
+		let tickByNumber =
+			dt.s < 1
+				? 0
+				: dt.min < 1
+					? 1
+					: dt.hour < 1
+						? 2
+						: dt.d < 1
+							? 3
+							: dt.m < 1
+								? 4
+								: dt.y < 1
+									? 5
+									: 6
+
+		const tickBy = [
+			src_millisecond,
+			src_second,
+			src_minute,
+			src_hour,
+			src_day,
+			src_month,
+			src_year,
+		]
+
+		src_select(`#${selector}`).html('')
+
+		switch (cfg.chartType) {
+			case 'Bar':
+				bar()
+				break
+
+			case 'Line':
+				line()
+				break
+
+			case 'Scatter':
+				scatter()
+				break
+
+			case 'Stacked Bar':
+				stackedBar()
+				break
+
+			default:
+				break
+		}
+
+		function bar() {
+			let svg = src_select(`#${selector}`)
+				.append('svg')
+				.attr('width', width + margin.left + margin.right)
+				.attr('height', height + margin.top + margin.bottom)
+				.append('g')
+				.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
+
+			const x = band()
+				.domain(
+					data.map(function (d) {
+						return d.date
+					})
+				)
+				.range([0, width])
+				.paddingInner(0.1)
+
+			const y = linear_linear()
+				.domain([
+					0,
+					max_max(data, function (d) {
+						return lodash.get(d, pathToYField)
+					}),
+				])
+				.range([height, 0])
+				.nice()
+			const xAxis = axisBottom(x)
+				.tickSize(-height)
+				.tickValues(
+					data
+						.map((d, i) =>
+							i % (Math.round(data.length / 5) + 1) == 0 ? d.date : null
+						)
+						.filter((d) => !!d)
+				)
+				.tickFormat((date) => {
+					return tickByNumber == 6
+						? timeFormat('%Y')(date)
+						: tickByNumber == 5
+							? timeFormat('%m/%y')(date)
+							: tickByNumber == 4
+								? timeFormat('%d/%m/%y')(date)
+								: tickByNumber == 3
+									? timeFormat('%H %d%/%m/%y')(date)
+									: tickByNumber == 2
+										? timeFormat('%H:%M %d%/%m/%y')(date)
+										: timeFormat('%H:%M:%S %d%/%m/%y')(date)
+				})
+			const yAxis = axisLeft(y).tickSize(-width)
+
+			const xAxisGrid = svg
+				.append('g')
+				.call(xAxis)
+				.attr('transform', 'translate(0,' + height + ')')
+			xAxisGrid.selectAll('.tick text').attr('transform', 'translate(0, 5)')
+			const yAxisGrid = svg.append('g').call(yAxis)
+			yAxisGrid.selectAll('line').attr('class', 'y-axis-grid')
+
+			var clip = svg
+				.append('defs')
+				.append('svg:clipPath')
+				.attr('id', 'clip')
+				.append('svg:rect')
+				.attr('width', width)
+				.attr('height', height)
+				.attr('x', 0)
+				.attr('y', 0)
+
+			var brush = brushX()
+				.extent([
+					[0, 0],
+					[width, height],
+				])
+				.on('end', updateChart)
+			svg.append('g').attr('class', 'brush').call(brush)
+
+			let bars = svg
+				.append('g')
+				.attr('clip-path', 'url(#clip)')
+				.attr('class', 'bars')
+			bars
+				.selectAll('rect')
+				.data(data)
+				.enter()
+				.append('rect')
+				.attr('x', (d) => x(d.date))
+				.attr('width', x.bandwidth())
+				.attr('y', (d) => y(lodash.get(d, pathToYField)))
+				.attr('height', (d) => height - y(lodash.get(d, pathToYField)))
+				.attr('class', 'bar')
+				.attr('fill', '#28a745')
+				.on('mouseover', mouseover)
+				.on('mousemove', mousemove)
+				.on('mouseout', mouseout)
+
+			svg
+				.append('text')
+				.attr(
+					'transform',
+					'translate(' + width / 2 + ' ,' + (height + margin.top + 20) + ')'
+				)
+				.style('text-anchor', 'middle')
+				.style('font-size', '12')
+				.attr('font-family', 'Nunito, Arial, sans-serif')
+				.text(pathToDate)
+			svg
+				.append('text')
+				.attr('transform', 'rotate(-90)')
+				.attr('y', 0 - margin.left)
+				.attr('x', 0 - height / 2)
+				.attr('dy', '1em')
+				.style('text-anchor', 'middle')
+				.attr('font-family', 'Nunito, Arial, sans-serif')
+				.style('font-size', '12')
+				.text(pathToYField)
+
+			const tooltip = src_select('body')
+				.append('div')
+				.attr('class', 'tooltip')
+				.style('display', 'none')
+			function mouseover() {
+				src_select(this).attr('stroke', 'black').attr('stroke-width', 0.6)
+				tooltip.style('display', null).style('visibility', 'visible')
+			}
+			function mousemove(e, d) {
+				tooltip.html(
+					`<ul>
+						  <li>Date: ${tickByNumber == 6
+						? timeFormat('%Y')(d.date)
+						: tickByNumber == 5
+							? timeFormat('%m/%y')(d.date)
+							: tickByNumber == 4
+								? timeFormat('%d/%m/%y')(d.date)
+								: tickByNumber == 3
+									? timeFormat('%H %d%/%m/%y')(d.date)
+									: tickByNumber == 2
+										? timeFormat('%H:%M %d%/%m/%y')(d.date)
+										: timeFormat('%H:%M:%S %d%/%m/%y')(d.date)
+					}</li>
 						  <li>${pathToYField}: ${formatNumber(lodash.get(d, pathToYField))}</li>
 					  </ul>`
-		)
-  
-		const bodyWidth = src_select('body').style('width').slice(0, -2)
-		const tooltipheight = e.pageY - tooltip.style('height').slice(0, -2) - 10
-		const tooltipWidth = tooltip.style('width').slice(0, -2)
-		const tooltipX =
-		  e.pageX < tooltipWidth / 2
-			? 0
-			: e.pageX + tooltipWidth / 2 > bodyWidth
-			? bodyWidth - tooltipWidth
-			: e.pageX - tooltipWidth / 2
-  
-		tooltip.style('top', tooltipheight + 'px').style('left', tooltipX + 'px')
-	  }
-	  function mouseout() {
-		tooltip.style('display', 'none').style('visibility', null)
-		src_select(this).attr('stroke', 'none')
-	  }
-  
-	  function updateChart(event) {
-		const extent = event.selection
-  
-		var idleTimeout
-		function idled() {
-		  idleTimeout = null
+				)
+
+				const bodyWidth = src_select('body').style('width').slice(0, -2)
+				const tooltipheight = e.pageY - tooltip.style('height').slice(0, -2) - 10
+				const tooltipWidth = tooltip.style('width').slice(0, -2)
+				const tooltipX =
+					e.pageX < tooltipWidth / 2
+						? 0
+						: e.pageX + tooltipWidth / 2 > bodyWidth
+							? bodyWidth - tooltipWidth
+							: e.pageX - tooltipWidth / 2
+
+				tooltip.style('top', tooltipheight + 'px').style('left', tooltipX + 'px')
+			}
+			function mouseout() {
+				tooltip.style('display', 'none').style('visibility', null)
+				src_select(this).attr('stroke', 'none')
+			}
+
+			function updateChart(event) {
+				const extent = event.selection
+
+				var idleTimeout
+				function idled() {
+					idleTimeout = null
+				}
+
+				let newData
+
+				if (!extent) {
+					if (!idleTimeout) return (idleTimeout = setTimeout(idled, 350))
+					x.domain([4, 8])
+				} else {
+					svg.select('.brush').call(brush.move, null)
+
+					newData = data
+						.map((d, i) => {
+							const pos = x(d.date)
+							if (pos > extent[0] && pos < extent[1]) {
+								return d
+							} else {
+								return null
+							}
+						})
+						.filter((d) => !!d)
+					x.domain(newData.map((d) => d.date))
+				}
+
+				y.domain([
+					0,
+					max_max(newData, function (d) {
+						return lodash.get(d, pathToYField)
+					}),
+				]).nice()
+
+				xAxis.tickValues(
+					newData
+						.map((d, i) =>
+							i % (Math.round(newData.length / 5) + 1) == 0 ||
+								i == newData.length - 1
+								? d.date
+								: null
+						)
+						.filter((d) => !!d)
+				)
+				xAxisGrid.transition().duration(1000).call(xAxis)
+				xAxisGrid.selectAll('.tick text').attr('transform', 'translate(0, 5)')
+				yAxisGrid.transition().duration(1000).call(yAxis)
+
+				bars.selectAll('rect').style('display', function (d) {
+					const max = max_max(x.domain())
+					const min = min_min(x.domain())
+
+					if (d.date >= min && d.date <= max) {
+						return null
+					} else {
+						return 'none'
+					}
+				})
+				bars
+					.selectAll('rect')
+					.transition()
+					.duration(1000)
+					.attr('x', function (d) {
+						return x(d.date)
+					})
+					.attr('width', function (d) {
+						return x.bandwidth()
+					})
+					.attr('y', function (d) {
+						return y(lodash.get(d, pathToYField))
+					})
+					.attr('height', (d) => height - y(lodash.get(d, pathToYField)))
+			}
+
+			svg.on('dblclick', function () {
+				x.domain(
+					data.map(function (d) {
+						return d.date
+					})
+				)
+
+				y.domain([
+					0,
+					max_max(data, function (d) {
+						return lodash.get(d, pathToYField)
+					}),
+				]).nice()
+				xAxis.tickValues(
+					data
+						.map((d, i) =>
+							i % (Math.round(data.length / 5) + 1) == 0 || i == data.length - 1
+								? d.date
+								: null
+						)
+						.filter((d) => !!d)
+				)
+				xAxisGrid.transition().call(xAxis)
+				xAxisGrid.selectAll('.tick text').attr('transform', 'translate(0, 5)')
+				yAxisGrid.transition().call(yAxis)
+
+				bars
+					.selectAll('rect')
+					.transition()
+					.style('display', null)
+					.attr('x', function (d) {
+						return x(d.date)
+					})
+					.attr('width', function (d) {
+						return x.bandwidth()
+					})
+					.attr('y', function (d) {
+						return y(lodash.get(d, pathToYField))
+					})
+					.attr('height', (d) => height - y(lodash.get(d, pathToYField)))
+			})
 		}
-  
-		let newData
-  
-		if (!extent) {
-		  if (!idleTimeout) return (idleTimeout = setTimeout(idled, 350))
-		  x.domain([4, 8])
-		} else {
-		  svg.select('.brush').call(brush.move, null)
-  
-		  newData = data
-			.map((d, i) => {
-			  const pos = x(d.date)
-			  if (pos > extent[0] && pos < extent[1]) {
-				return d
-			  } else {
-				return null
-			  }
-			})
-			.filter((d) => !!d)
-		  x.domain(newData.map((d) => d.date))
-		}
-  
-		y.domain([
-		  0,
-		  max_max(newData, function (d) {
-			return lodash.get(d, pathToYField)
-		  }),
-		]).nice()
-  
-		xAxis.tickValues(
-		  newData
-			.map((d, i) =>
-			  i % (Math.round(newData.length / 5) + 1) == 0 ||
-			  i == newData.length - 1
-				? d.date
-				: null
-			)
-			.filter((d) => !!d)
-		)
-		xAxisGrid.transition().duration(1000).call(xAxis)
-		xAxisGrid.selectAll('.tick text').attr('transform', 'translate(0, 5)')
-		yAxisGrid.transition().duration(1000).call(yAxis)
-  
-		bars.selectAll('rect').style('display', function (d) {
-		  const max = max_max(x.domain())
-		  const min = min_min(x.domain())
-  
-		  if (d.date >= min && d.date <= max) {
-			return null
-		  } else {
-			return 'none'
-		  }
-		})
-		bars
-		  .selectAll('rect')
-		  .transition()
-		  .duration(1000)
-		  .attr('x', function (d) {
-			return x(d.date)
-		  })
-		  .attr('width', function (d) {
-			return x.bandwidth()
-		  })
-		  .attr('y', function (d) {
-			return y(lodash.get(d, pathToYField))
-		  })
-		  .attr('height', (d) => height - y(lodash.get(d, pathToYField)))
-	  }
-  
-	  svg.on('dblclick', function () {
-		x.domain(
-		  data.map(function (d) {
-			return d.date
-		  })
-		)
-  
-		y.domain([
-		  0,
-		  max_max(data, function (d) {
-			return lodash.get(d, pathToYField)
-		  }),
-		]).nice()
-		xAxis.tickValues(
-		  data
-			.map((d, i) =>
-			  i % (Math.round(data.length / 5) + 1) == 0 || i == data.length - 1
-				? d.date
-				: null
-			)
-			.filter((d) => !!d)
-		)
-		xAxisGrid.transition().call(xAxis)
-		xAxisGrid.selectAll('.tick text').attr('transform', 'translate(0, 5)')
-		yAxisGrid.transition().call(yAxis)
-  
-		bars
-		  .selectAll('rect')
-		  .transition()
-		  .style('display', null)
-		  .attr('x', function (d) {
-			return x(d.date)
-		  })
-		  .attr('width', function (d) {
-			return x.bandwidth()
-		  })
-		  .attr('y', function (d) {
-			return y(lodash.get(d, pathToYField))
-		  })
-		  .attr('height', (d) => height - y(lodash.get(d, pathToYField)))
-	  })
-	}
-  
-	function line() {
-	  let svg = src_select(`#${selector}`)
-		.append('svg')
-		.attr('width', width + margin.left + margin.right)
-		.attr('height', height + margin.top + margin.bottom)
-		.append('g')
-		.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
-  
-	  const x = time()
-		.domain(
-		  extent(data, function (d) {
-			return d.date
-		  })
-		)
-		.range([0, width])
-		.nice(tickBy[tickByNumber])
-	  const y = linear_linear()
-		.domain([
-		  0,
-		  max_max(data, function (d) {
-			return lodash.get(d, pathToYField)
-		  }),
-		])
-		.range([height, 0])
-		.nice()
-  
-	  const xAxis = axisBottom(x)
-		.tickSize(-height)
-		.ticks(5)
-		.tickFormat((date) => {
-		  return tickByNumber == 6
-			? timeFormat('%Y')(date)
-			: tickByNumber == 5
-			? timeFormat('%m/%y')(date)
-			: tickByNumber == 4
-			? timeFormat('%d/%m/%y')(date)
-			: tickByNumber == 3
-			? timeFormat('%H %d%/%m/%y')(date)
-			: tickByNumber == 2
-			? timeFormat('%H:%M %d%/%m/%y')(date)
-			: timeFormat('%H:%M:%S %d%/%m/%y')(date)
-		})
-	  const yAxis = axisLeft(y).tickSize(-width)
-  
-	  const xAxisGrid = svg
-		.append('g')
-		.call(xAxis)
-		.attr('transform', 'translate(0,' + height + ')')
-	  xAxisGrid.selectAll('.tick text').attr('transform', 'translate(0, 5)')
-	  const yAxisGrid = svg.append('g').call(yAxis)
-	  yAxisGrid.selectAll('line').attr('class', 'y-axis-grid')
-  
-	  var clip = svg
-		.append('defs')
-		.append('svg:clipPath')
-		.attr('id', 'clip')
-		.append('svg:rect')
-		.attr('width', width)
-		.attr('height', height)
-		.attr('x', 0)
-		.attr('y', 0)
-  
-	  var brush = brushX()
-		.extent([
-		  [0, 0],
-		  [width, height],
-		])
-		.on('end', updateChart)
-	  svg.append('g').attr('class', 'brush').call(brush)
-  
-	  let line = svg.append('g').attr('clip-path', 'url(#clip)')
-	  line
-		.append('path')
-		.datum(data)
-		.attr('class', 'line')
-		.attr('fill', 'none')
-		.attr('stroke', '#28a745')
-		.attr('stroke-width', 1.5)
-		.attr(
-		  'd',
-		  src_line()
-			.x(function (d) {
-			  return x(d.date)
-			})
-			.y(function (d) {
-			  return y(lodash.get(d, pathToYField))
-			})
-		)
-  
-	  svg
-		.append('text')
-		.attr(
-		  'transform',
-		  'translate(' + width / 2 + ' ,' + (height + margin.top + 20) + ')'
-		)
-		.style('text-anchor', 'middle')
-		.attr('font-family', 'Nunito, Arial, sans-serif')
-		.style('font-size', '12')
-		.text(pathToDate)
-	  svg
-		.append('text')
-		.attr('transform', 'rotate(-90)')
-		.attr('y', 0 - margin.left)
-		.attr('x', 0 - height / 2)
-		.attr('dy', '1em')
-		.style('text-anchor', 'middle')
-		.attr('font-family', 'Nunito, Arial, sans-serif')
-		.style('font-size', '12')
-		.text(pathToYField)
-  
-	  const tooltip = src_select('body')
-		.append('div')
-		.attr('class', 'tooltip')
-		.style('display', 'none')
-  
-	  var bisectDate = bisector(function (d) {
-		return d.date
-	  }).left
-  
-	  var focus = svg.append('g').attr('class', 'focus').style('display', 'none')
-  
-	  focus.append('circle').attr('r', 3)
-  
-	  svg
-		.on('mouseover', mouseover)
-		.on('mouseout', mouseout)
-		.on('mousemove', mousemove)
-	  function mouseover() {
-		focus.style('display', null)
-		tooltip.style('display', null).style('visibility', 'visible')
-	  }
-	  function mouseout() {
-		focus.style('display', 'none')
-		tooltip.style('display', 'none').style('visibility', null)
-	  }
-	  function mousemove(e) {
-		var x0 = x.invert(src_pointer(e)[0]),
-		  i = bisectDate(data, x0, 1),
-		  d0 = data[i - 1],
-		  d1 = data[i] || d0,
-		  d = x0 - d0.date > d1.date - x0 ? d1 : d0
-		focus.attr(
-		  'transform',
-		  'translate(' + x(d.date) + ',' + y(lodash.get(d, pathToYField)) + ')'
-		)
-		const tooltipheight = tooltip.style('height').slice(0, -2)
-		const tooltipWidth = tooltip.style('width').slice(0, -2)
-		tooltip
-		  .style(
-			'left',
-			src_select(`#${selector}`).node().getBoundingClientRect().x +
-			  x(d.date) +
-			  10 +
-			  'px'
-		  )
-		  .style(
-			'top',
-			src_select(`#${selector}`).node().getBoundingClientRect().y +
-			  y(lodash.get(d, pathToYField)) -
-			  tooltipheight -
-			  5 +
-			  'px'
-		  )
-		tooltip.html(
-		  `<ul>
-					  <li>Date: ${
-			  tickByNumber == 6
-				? timeFormat('%Y')(d.date)
-				: tickByNumber == 5
-				? timeFormat('%m/%y')(d.date)
-				: tickByNumber == 4
-				? timeFormat('%d/%m/%y')(d.date)
-				: tickByNumber == 3
-				? timeFormat('%H %d%/%m/%y')(d.date)
-				: tickByNumber == 2
-				? timeFormat('%H:%M %d%/%m/%y')(d.date)
-				: timeFormat('%H:%M:%S %d%/%m/%y')(d.date)
-			}</li>
+
+		function line() {
+			let svg = src_select(`#${selector}`)
+				.append('svg')
+				.attr('width', width + margin.left + margin.right)
+				.attr('height', height + margin.top + margin.bottom)
+				.append('g')
+				.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
+
+			const x = time()
+				.domain(
+					extent(data, function (d) {
+						return d.date
+					})
+				)
+				.range([0, width])
+				.nice(tickBy[tickByNumber])
+			const y = linear_linear()
+				.domain([
+					0,
+					max_max(data, function (d) {
+						return lodash.get(d, pathToYField)
+					}),
+				])
+				.range([height, 0])
+				.nice()
+
+			const xAxis = axisBottom(x)
+				.tickSize(-height)
+				.ticks(5)
+				.tickFormat((date) => {
+					return tickByNumber == 6
+						? timeFormat('%Y')(date)
+						: tickByNumber == 5
+							? timeFormat('%m/%y')(date)
+							: tickByNumber == 4
+								? timeFormat('%d/%m/%y')(date)
+								: tickByNumber == 3
+									? timeFormat('%H %d%/%m/%y')(date)
+									: tickByNumber == 2
+										? timeFormat('%H:%M %d%/%m/%y')(date)
+										: timeFormat('%H:%M:%S %d%/%m/%y')(date)
+				})
+			const yAxis = axisLeft(y).tickSize(-width)
+
+			const xAxisGrid = svg
+				.append('g')
+				.call(xAxis)
+				.attr('transform', 'translate(0,' + height + ')')
+			xAxisGrid.selectAll('.tick text').attr('transform', 'translate(0, 5)')
+			const yAxisGrid = svg.append('g').call(yAxis)
+			yAxisGrid.selectAll('line').attr('class', 'y-axis-grid')
+
+			var clip = svg
+				.append('defs')
+				.append('svg:clipPath')
+				.attr('id', 'clip')
+				.append('svg:rect')
+				.attr('width', width)
+				.attr('height', height)
+				.attr('x', 0)
+				.attr('y', 0)
+
+			var brush = brushX()
+				.extent([
+					[0, 0],
+					[width, height],
+				])
+				.on('end', updateChart)
+			svg.append('g').attr('class', 'brush').call(brush)
+
+			let line = svg.append('g').attr('clip-path', 'url(#clip)')
+			line
+				.append('path')
+				.datum(data)
+				.attr('class', 'line')
+				.attr('fill', 'none')
+				.attr('stroke', '#28a745')
+				.attr('stroke-width', 1.5)
+				.attr(
+					'd',
+					src_line()
+						.x(function (d) {
+							return x(d.date)
+						})
+						.y(function (d) {
+							return y(lodash.get(d, pathToYField))
+						})
+				)
+
+			svg
+				.append('text')
+				.attr(
+					'transform',
+					'translate(' + width / 2 + ' ,' + (height + margin.top + 20) + ')'
+				)
+				.style('text-anchor', 'middle')
+				.attr('font-family', 'Nunito, Arial, sans-serif')
+				.style('font-size', '12')
+				.text(pathToDate)
+			svg
+				.append('text')
+				.attr('transform', 'rotate(-90)')
+				.attr('y', 0 - margin.left)
+				.attr('x', 0 - height / 2)
+				.attr('dy', '1em')
+				.style('text-anchor', 'middle')
+				.attr('font-family', 'Nunito, Arial, sans-serif')
+				.style('font-size', '12')
+				.text(pathToYField)
+
+			const tooltip = src_select('body')
+				.append('div')
+				.attr('class', 'tooltip')
+				.style('display', 'none')
+
+			var bisectDate = bisector(function (d) {
+				return d.date
+			}).left
+
+			var focus = svg.append('g').attr('class', 'focus').style('display', 'none')
+
+			focus.append('circle').attr('r', 3)
+
+			svg
+				.on('mouseover', mouseover)
+				.on('mouseout', mouseout)
+				.on('mousemove', mousemove)
+			function mouseover() {
+				focus.style('display', null)
+				tooltip.style('display', null).style('visibility', 'visible')
+			}
+			function mouseout() {
+				focus.style('display', 'none')
+				tooltip.style('display', 'none').style('visibility', null)
+			}
+			function mousemove(e) {
+				var x0 = x.invert(src_pointer(e)[0]),
+					i = bisectDate(data, x0, 1),
+					d0 = data[i - 1],
+					d1 = data[i] || d0,
+					d = x0 - d0.date > d1.date - x0 ? d1 : d0
+				focus.attr(
+					'transform',
+					'translate(' + x(d.date) + ',' + y(lodash.get(d, pathToYField)) + ')'
+				)
+				const tooltipheight = tooltip.style('height').slice(0, -2)
+				const tooltipWidth = tooltip.style('width').slice(0, -2)
+				tooltip
+					.style(
+						'left',
+						src_select(`#${selector}`).node().getBoundingClientRect().x +
+						x(d.date) +
+						10 +
+						'px'
+					)
+					.style(
+						'top',
+						src_select(`#${selector}`).node().getBoundingClientRect().y +
+						y(lodash.get(d, pathToYField)) -
+						tooltipheight -
+						5 +
+						'px'
+					)
+				tooltip.html(
+					`<ul>
+					  <li>Date: ${tickByNumber == 6
+						? timeFormat('%Y')(d.date)
+						: tickByNumber == 5
+							? timeFormat('%m/%y')(d.date)
+							: tickByNumber == 4
+								? timeFormat('%d/%m/%y')(d.date)
+								: tickByNumber == 3
+									? timeFormat('%H %d%/%m/%y')(d.date)
+									: tickByNumber == 2
+										? timeFormat('%H:%M %d%/%m/%y')(d.date)
+										: timeFormat('%H:%M:%S %d%/%m/%y')(d.date)
+					}</li>
 					  <li>${pathToYField}: ${formatNumber(lodash.get(d, pathToYField))}</li>
 				  </ul>`
-		)
-	  }
-  
-	  function updateChart(event) {
-		const extent = event.selection
-  
-		var idleTimeout
-		function idled() {
-		  idleTimeout = null
-		}
-  
-		if (!extent) {
-		  if (!idleTimeout) return (idleTimeout = setTimeout(idled, 350))
-		  x.domain([4, 8])
-		} else {
-		  svg.select('.brush').call(brush.move, null)
-		  x.domain([x.invert(extent[0]), x.invert(extent[1])]).nice(
-			tickBy[tickByNumber]
-		  )
-		}
-		y.domain([
-		  0,
-		  max_max(
-			data.map((d) => {
-			  const domain = x.domain()
-			  if (d.date >= domain[0] && d.date <= domain[1]) {
-				return lodash.get(d, pathToYField)
-			  } else {
-				return 0
-			  }
+				)
+			}
+
+			function updateChart(event) {
+				const extent = event.selection
+
+				var idleTimeout
+				function idled() {
+					idleTimeout = null
+				}
+
+				if (!extent) {
+					if (!idleTimeout) return (idleTimeout = setTimeout(idled, 350))
+					x.domain([4, 8])
+				} else {
+					svg.select('.brush').call(brush.move, null)
+					x.domain([x.invert(extent[0]), x.invert(extent[1])]).nice(
+						tickBy[tickByNumber]
+					)
+				}
+				y.domain([
+					0,
+					max_max(
+						data.map((d) => {
+							const domain = x.domain()
+							if (d.date >= domain[0] && d.date <= domain[1]) {
+								return lodash.get(d, pathToYField)
+							} else {
+								return 0
+							}
+						})
+					),
+				]).nice()
+				xAxisGrid.transition().duration(1000).call(xAxis)
+				yAxisGrid.transition().duration(1000).call(yAxis)
+
+				line
+					.select('.line')
+					.transition()
+					.duration(1000)
+					.attr(
+						'd',
+						src_line()
+							.x(function (d) {
+								return x(d.date)
+							})
+							.y(function (d) {
+								return y(lodash.get(d, pathToYField))
+							})
+					)
+			}
+
+			svg.on('dblclick', function () {
+				x.domain(
+					extent(data, function (d) {
+						return d.date
+					})
+				).nice(tickBy[tickByNumber])
+
+				y.domain([
+					0,
+					max_max(
+						data.map((d) => {
+							const domain = x.domain()
+							if (d.date >= domain[0] && d.date <= domain[1]) {
+								return lodash.get(d, pathToYField)
+							} else {
+								return 0
+							}
+						})
+					),
+				]).nice()
+				xAxisGrid.transition().call(xAxis)
+				yAxisGrid.transition().call(yAxis)
+
+				line
+					.select('.line')
+					.transition()
+					.attr(
+						'd',
+						src_line()
+							.x(function (d) {
+								return x(d.date)
+							})
+							.y(function (d) {
+								return y(lodash.get(d, pathToYField))
+							})
+					)
 			})
-		  ),
-		]).nice()
-		xAxisGrid.transition().duration(1000).call(xAxis)
-		yAxisGrid.transition().duration(1000).call(yAxis)
-  
-		line
-		  .select('.line')
-		  .transition()
-		  .duration(1000)
-		  .attr(
-			'd',
-			src_line()
-			  .x(function (d) {
-				return x(d.date)
-			  })
-			  .y(function (d) {
-				return y(lodash.get(d, pathToYField))
-			  })
-		  )
-	  }
-  
-	  svg.on('dblclick', function () {
-		x.domain(
-		  extent(data, function (d) {
-			return d.date
-		  })
-		).nice(tickBy[tickByNumber])
-  
-		y.domain([
-		  0,
-		  max_max(
-			data.map((d) => {
-			  const domain = x.domain()
-			  if (d.date >= domain[0] && d.date <= domain[1]) {
-				return lodash.get(d, pathToYField)
-			  } else {
-				return 0
-			  }
-			})
-		  ),
-		]).nice()
-		xAxisGrid.transition().call(xAxis)
-		yAxisGrid.transition().call(yAxis)
-  
-		line
-		  .select('.line')
-		  .transition()
-		  .attr(
-			'd',
-			src_line()
-			  .x(function (d) {
-				return x(d.date)
-			  })
-			  .y(function (d) {
-				return y(lodash.get(d, pathToYField))
-			  })
-		  )
-	  })
-	}
-  
-	function scatter() {
-	  let svg = src_select(`#${selector}`)
-		.append('svg')
-		.attr('width', width + margin.left + margin.right)
-		.attr('height', height + margin.top + margin.bottom)
-		.append('g')
-		.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
-  
-	  const x = time()
-		.domain(
-		  extent(data, function (d) {
-			return d.date
-		  })
-		)
-		.range([0, width])
-		.nice(tickBy[tickByNumber])
-	  const y = linear_linear()
-		.domain([
-		  0,
-		  max_max(data, function (d) {
-			return lodash.get(d, pathToYField)
-		  }),
-		])
-		.range([height, 0])
-		.nice()
-  
-	  const xAxis = axisBottom(x)
-		.tickSize(-height)
-		.ticks(5)
-		.tickFormat((date) => {
-		  return tickByNumber == 6
-			? timeFormat('%Y')(date)
-			: tickByNumber == 5
-			? timeFormat('%m/%y')(date)
-			: tickByNumber == 4
-			? timeFormat('%d/%m/%y')(date)
-			: tickByNumber == 3
-			? timeFormat('%H %d%/%m/%y')(date)
-			: tickByNumber == 2
-			? timeFormat('%H:%M %d%/%m/%y')(date)
-			: timeFormat('%H:%M:%S %d%/%m/%y')(date)
-		})
-	  const yAxis = axisLeft(y).tickSize(-width)
-  
-	  const xAxisGrid = svg
-		.append('g')
-		.call(xAxis)
-		.attr('transform', 'translate(0,' + height + ')')
-	  xAxisGrid.selectAll('.tick text').attr('transform', 'translate(0, 5)')
-	  const yAxisGrid = svg.append('g').call(yAxis)
-	  yAxisGrid.selectAll('line').attr('class', 'y-axis-grid')
-  
-	  var clip = svg
-		.append('defs')
-		.append('svg:clipPath')
-		.attr('id', 'clip')
-		.append('svg:rect')
-		.attr('width', width)
-		.attr('height', height)
-		.attr('x', 0)
-		.attr('y', 0)
-  
-	  var brush = brushX()
-		.extent([
-		  [0, 0],
-		  [width, height],
-		])
-		.on('end', updateChart)
-	  svg.append('g').attr('class', 'brush').call(brush)
-  
-	  let circles = svg
-		.append('g')
-		.attr('clip-path', 'url(#clip)')
-		.attr('class', 'circles')
-	  circles
-		.selectAll('circle')
-		.data(data)
-		.enter()
-		.append('circle')
-		.attr('cx', function (d) {
-		  return x(d.date)
-		})
-		.attr('cy', function (d) {
-		  return y(lodash.get(d, pathToYField))
-		})
-		.attr('r', function (d) {
-		  return 4
-		})
-		.attr('class', 'circle')
-		.attr('fill', '#28a745')
-		.on('mouseover', mouseover)
-		.on('mousemove', mousemove)
-		.on('mouseout', mouseout)
-  
-	  svg
-		.append('text')
-		.attr(
-		  'transform',
-		  'translate(' + width / 2 + ' ,' + (height + margin.top + 20) + ')'
-		)
-		.style('text-anchor', 'middle')
-		.attr('font-family', 'Nunito, Arial, sans-serif')
-		.style('font-size', '12')
-		.text(pathToDate)
-	  svg
-		.append('text')
-		.attr('transform', 'rotate(-90)')
-		.attr('y', 0 - margin.left)
-		.attr('x', 0 - height / 2)
-		.attr('dy', '1em')
-		.style('text-anchor', 'middle')
-		.attr('font-family', 'Nunito, Arial, sans-serif')
-		.style('font-size', '12')
-		.text(pathToYField)
-  
-	  const tooltip = src_select('body')
-		.append('div')
-		.attr('class', 'tooltip')
-		.style('display', 'none')
-	  function mouseover() {
-		src_select(this).attr('stroke', 'black').attr('stroke-width', 0.6)
-		tooltip.style('display', null).style('visibility', 'visible')
-	  }
-	  function mousemove(e, d) {
-		tooltip.html(
-		  `<ul>
-					  <li>Date: ${
-			  tickByNumber == 6
-				? timeFormat('%Y')(d.date)
-				: tickByNumber == 5
-				? timeFormat('%m/%y')(d.date)
-				: tickByNumber == 4
-				? timeFormat('%d/%m/%y')(d.date)
-				: tickByNumber == 3
-				? timeFormat('%H %d%/%m/%y')(d.date)
-				: tickByNumber == 2
-				? timeFormat('%H:%M %d%/%m/%y')(d.date)
-				: timeFormat('%H:%M:%S %d%/%m/%y')(d.date)
-			}</li>
+		}
+
+		function scatter() {
+			let svg = src_select(`#${selector}`)
+				.append('svg')
+				.attr('width', width + margin.left + margin.right)
+				.attr('height', height + margin.top + margin.bottom)
+				.append('g')
+				.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
+
+			const x = time()
+				.domain(
+					extent(data, function (d) {
+						return d.date
+					})
+				)
+				.range([0, width])
+				.nice(tickBy[tickByNumber])
+			const y = linear_linear()
+				.domain([
+					0,
+					max_max(data, function (d) {
+						return lodash.get(d, pathToYField)
+					}),
+				])
+				.range([height, 0])
+				.nice()
+
+			const xAxis = axisBottom(x)
+				.tickSize(-height)
+				.ticks(5)
+				.tickFormat((date) => {
+					return tickByNumber == 6
+						? timeFormat('%Y')(date)
+						: tickByNumber == 5
+							? timeFormat('%m/%y')(date)
+							: tickByNumber == 4
+								? timeFormat('%d/%m/%y')(date)
+								: tickByNumber == 3
+									? timeFormat('%H %d%/%m/%y')(date)
+									: tickByNumber == 2
+										? timeFormat('%H:%M %d%/%m/%y')(date)
+										: timeFormat('%H:%M:%S %d%/%m/%y')(date)
+				})
+			const yAxis = axisLeft(y).tickSize(-width)
+
+			const xAxisGrid = svg
+				.append('g')
+				.call(xAxis)
+				.attr('transform', 'translate(0,' + height + ')')
+			xAxisGrid.selectAll('.tick text').attr('transform', 'translate(0, 5)')
+			const yAxisGrid = svg.append('g').call(yAxis)
+			yAxisGrid.selectAll('line').attr('class', 'y-axis-grid')
+
+			var clip = svg
+				.append('defs')
+				.append('svg:clipPath')
+				.attr('id', 'clip')
+				.append('svg:rect')
+				.attr('width', width)
+				.attr('height', height)
+				.attr('x', 0)
+				.attr('y', 0)
+
+			var brush = brushX()
+				.extent([
+					[0, 0],
+					[width, height],
+				])
+				.on('end', updateChart)
+			svg.append('g').attr('class', 'brush').call(brush)
+
+			let circles = svg
+				.append('g')
+				.attr('clip-path', 'url(#clip)')
+				.attr('class', 'circles')
+			circles
+				.selectAll('circle')
+				.data(data)
+				.enter()
+				.append('circle')
+				.attr('cx', function (d) {
+					return x(d.date)
+				})
+				.attr('cy', function (d) {
+					return y(lodash.get(d, pathToYField))
+				})
+				.attr('r', function (d) {
+					return 4
+				})
+				.attr('class', 'circle')
+				.attr('fill', '#28a745')
+				.on('mouseover', mouseover)
+				.on('mousemove', mousemove)
+				.on('mouseout', mouseout)
+
+			svg
+				.append('text')
+				.attr(
+					'transform',
+					'translate(' + width / 2 + ' ,' + (height + margin.top + 20) + ')'
+				)
+				.style('text-anchor', 'middle')
+				.attr('font-family', 'Nunito, Arial, sans-serif')
+				.style('font-size', '12')
+				.text(pathToDate)
+			svg
+				.append('text')
+				.attr('transform', 'rotate(-90)')
+				.attr('y', 0 - margin.left)
+				.attr('x', 0 - height / 2)
+				.attr('dy', '1em')
+				.style('text-anchor', 'middle')
+				.attr('font-family', 'Nunito, Arial, sans-serif')
+				.style('font-size', '12')
+				.text(pathToYField)
+
+			const tooltip = src_select('body')
+				.append('div')
+				.attr('class', 'tooltip')
+				.style('display', 'none')
+			function mouseover() {
+				src_select(this).attr('stroke', 'black').attr('stroke-width', 0.6)
+				tooltip.style('display', null).style('visibility', 'visible')
+			}
+			function mousemove(e, d) {
+				tooltip.html(
+					`<ul>
+					  <li>Date: ${tickByNumber == 6
+						? timeFormat('%Y')(d.date)
+						: tickByNumber == 5
+							? timeFormat('%m/%y')(d.date)
+							: tickByNumber == 4
+								? timeFormat('%d/%m/%y')(d.date)
+								: tickByNumber == 3
+									? timeFormat('%H %d%/%m/%y')(d.date)
+									: tickByNumber == 2
+										? timeFormat('%H:%M %d%/%m/%y')(d.date)
+										: timeFormat('%H:%M:%S %d%/%m/%y')(d.date)
+					}</li>
 						  <li>${pathToYField}: ${formatNumber(lodash.get(d, pathToYField))}</li>
 					  </ul>`
-		)
-  
-		const bodyWidth = src_select('body').style('width').slice(0, -2)
-		const tooltipheight = e.pageY - tooltip.style('height').slice(0, -2) - 10
-		const tooltipWidth = tooltip.style('width').slice(0, -2)
-		const tooltipX =
-		  e.pageX < tooltipWidth / 2
-			? 0
-			: e.pageX + tooltipWidth / 2 > bodyWidth
-			? bodyWidth - tooltipWidth
-			: e.pageX - tooltipWidth / 2
-  
-		tooltip.style('top', tooltipheight + 'px').style('left', tooltipX + 'px')
-	  }
-	  function mouseout() {
-		tooltip.style('display', 'none').style('visibility', null)
-		src_select(this).attr('stroke', 'none')
-	  }
-  
-	  function updateChart(event) {
-		const extent = event.selection
-  
-		var idleTimeout
-		function idled() {
-		  idleTimeout = null
-		}
-  
-		if (!extent) {
-		  if (!idleTimeout) return (idleTimeout = setTimeout(idled, 350))
-		  x.domain([4, 8])
-		} else {
-		  svg.select('.brush').call(brush.move, null)
-		  x.domain([x.invert(extent[0]), x.invert(extent[1])]).nice(
-			tickBy[tickByNumber]
-		  )
-		}
-		y.domain([
-		  0,
-		  max_max(
-			data.map((d) => {
-			  const domain = x.domain()
-			  if (d.date >= domain[0] && d.date <= domain[1]) {
-				return lodash.get(d, pathToYField)
-			  } else {
-				return 0
-			  }
-			})
-		  ),
-		]).nice()
-		xAxisGrid.transition().duration(1000).call(xAxis)
-		yAxisGrid.transition().duration(1000).call(yAxis)
-  
-		circles
-		  .selectAll('.circle')
-		  .transition()
-		  .duration(1000)
-		  .attr('cx', function (d) {
-			return x(d.date)
-		  })
-		  .attr('cy', function (d) {
-			return y(lodash.get(d, pathToYField))
-		  })
-		  .attr('r', function (d) {
-			return 4
-		  })
-	  }
-  
-	  svg.on('dblclick', function () {
-		x.domain(
-		  extent(data, function (d) {
-			return d.date
-		  })
-		).nice(tickBy[tickByNumber])
-  
-		y.domain([
-		  0,
-		  max_max(
-			data.map((d) => {
-			  const domain = x.domain()
-			  if (d.date >= domain[0] && d.date <= domain[1]) {
-				return lodash.get(d, pathToYField)
-			  } else {
-				return 0
-			  }
-			})
-		  ),
-		]).nice()
-		xAxisGrid.transition().call(xAxis)
-		yAxisGrid.transition().call(yAxis)
-  
-		circles
-		  .selectAll('.circle')
-		  .transition()
-		  .attr('cx', function (d) {
-			return x(d.date)
-		  })
-		  .attr('cy', function (d) {
-			return y(lodash.get(d, pathToYField))
-		  })
-		  .attr('r', function (d) {
-			return 4
-		  })
-	  })
-	}
-  
-	function stackedBar() {
-	  const pathToSubgroupField = cfg.subgroupField
-	  const subgroups = lodash.uniq(data.map((d) => lodash.get(d, pathToSubgroupField)))
-  
-	  const wide = Array.from(group(data, (d) => d.date)).map((d) => {
-		const newVal = {
-		  date: d[0],
-		}
-		d[1].forEach((d) => {
-		  Object.assign(newVal, {
-			[lodash.get(d, pathToSubgroupField)]: lodash.get(d, pathToYField),
-		  })
-		})
-		subgroups.forEach((name) => {
-		  if (!(name in newVal)) {
-			Object.assign(newVal, { [name]: 0 })
-		  }
-		})
-  
-		return newVal
-	  })
-  
-	  dt = {
-		ms:
-		  (wide[wide.length - 1].date - wide[0].date) /
-		  (wide.length > 2 ? wide.length - 2 : wide.length),
-		s:
-		  (wide[wide.length - 1].date - wide[0].date) /
-		  (wide.length > 2 ? wide.length - 2 : wide.length) /
-		  1000,
-		min:
-		  (wide[wide.length - 1].date - wide[0].date) /
-		  (wide.length > 2 ? wide.length - 2 : wide.length) /
-		  (1000 * 60),
-		h:
-		  (wide[wide.length - 1].date - wide[0].date) /
-		  (wide.length > 2 ? wide.length - 2 : wide.length) /
-		  (1000 * 60 * 60),
-		d:
-		  (wide[wide.length - 1].date - wide[0].date) /
-		  (wide.length > 2 ? wide.length - 2 : wide.length) /
-		  (1000 * 60 * 60 * 24),
-		m:
-		  (wide[wide.length - 1].date - wide[0].date) /
-		  (wide.length > 2 ? wide.length - 2 : wide.length) /
-		  (1000 * 60 * 60 * 24 * 30),
-		y:
-		  (wide[wide.length - 1].date - wide[0].date) /
-		  (wide.length > 2 ? wide.length - 2 : wide.length) /
-		  (1000 * 60 * 60 * 24 * 365),
-	  }
-  
-	  tickByNumber =
-		dt.s < 1
-		  ? 0
-		  : dt.min < 1
-		  ? 1
-		  : dt.hour < 1
-		  ? 2
-		  : dt.d < 1
-		  ? 3
-		  : dt.m < 1
-		  ? 4
-		  : dt.y < 1
-		  ? 5
-		  : 6
-  
-	  const groups = wide.map((d) => d.date)
-  
-	  const color = ordinal(category10)
-  
-	  const stackedData = stack().keys(subgroups)(wide)
-  
-	  stackedData.forEach((layer) => {
-		layer.forEach((a) => {
-		  a.key = layer.key
-		})
-	  })
-  
-	  const yMax = max_max(
-		wide.map((d) => {
-		  let acc = 0
-		  for (let k in d) {
-			if (typeof d[k] !== 'object') {
-			  acc += d[k]
+				)
+
+				const bodyWidth = src_select('body').style('width').slice(0, -2)
+				const tooltipheight = e.pageY - tooltip.style('height').slice(0, -2) - 10
+				const tooltipWidth = tooltip.style('width').slice(0, -2)
+				const tooltipX =
+					e.pageX < tooltipWidth / 2
+						? 0
+						: e.pageX + tooltipWidth / 2 > bodyWidth
+							? bodyWidth - tooltipWidth
+							: e.pageX - tooltipWidth / 2
+
+				tooltip.style('top', tooltipheight + 'px').style('left', tooltipX + 'px')
 			}
-		  }
-		  return acc
-		})
-	  )
-  
-	  let svg = src_select(`#${selector}`)
-		.append('svg')
-		.attr('width', width + margin.left + margin.right)
-		.attr('height', height + margin.top + margin.bottom)
-		.append('g')
-		.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
-  
-	  const x = band()
-		.domain(
-		  wide.map(function (d) {
-			return d.date
-		  })
-		)
-		.range([0, width])
-		.paddingInner(0.1)
-  
-	  const y = linear_linear()
-		.domain([
-		  0,
-		  max_max(
-			wide.map((d) => {
-			  let acc = 0
-			  for (let k in d) {
-				if (typeof d[k] !== 'object') {
-				  acc += d[k]
+			function mouseout() {
+				tooltip.style('display', 'none').style('visibility', null)
+				src_select(this).attr('stroke', 'none')
+			}
+
+			function updateChart(event) {
+				const extent = event.selection
+
+				var idleTimeout
+				function idled() {
+					idleTimeout = null
 				}
-			  }
-			  return acc
+
+				if (!extent) {
+					if (!idleTimeout) return (idleTimeout = setTimeout(idled, 350))
+					x.domain([4, 8])
+				} else {
+					svg.select('.brush').call(brush.move, null)
+					x.domain([x.invert(extent[0]), x.invert(extent[1])]).nice(
+						tickBy[tickByNumber]
+					)
+				}
+				y.domain([
+					0,
+					max_max(
+						data.map((d) => {
+							const domain = x.domain()
+							if (d.date >= domain[0] && d.date <= domain[1]) {
+								return lodash.get(d, pathToYField)
+							} else {
+								return 0
+							}
+						})
+					),
+				]).nice()
+				xAxisGrid.transition().duration(1000).call(xAxis)
+				yAxisGrid.transition().duration(1000).call(yAxis)
+
+				circles
+					.selectAll('.circle')
+					.transition()
+					.duration(1000)
+					.attr('cx', function (d) {
+						return x(d.date)
+					})
+					.attr('cy', function (d) {
+						return y(lodash.get(d, pathToYField))
+					})
+					.attr('r', function (d) {
+						return 4
+					})
+			}
+
+			svg.on('dblclick', function () {
+				x.domain(
+					extent(data, function (d) {
+						return d.date
+					})
+				).nice(tickBy[tickByNumber])
+
+				y.domain([
+					0,
+					max_max(
+						data.map((d) => {
+							const domain = x.domain()
+							if (d.date >= domain[0] && d.date <= domain[1]) {
+								return lodash.get(d, pathToYField)
+							} else {
+								return 0
+							}
+						})
+					),
+				]).nice()
+				xAxisGrid.transition().call(xAxis)
+				yAxisGrid.transition().call(yAxis)
+
+				circles
+					.selectAll('.circle')
+					.transition()
+					.attr('cx', function (d) {
+						return x(d.date)
+					})
+					.attr('cy', function (d) {
+						return y(lodash.get(d, pathToYField))
+					})
+					.attr('r', function (d) {
+						return 4
+					})
 			})
-		  ),
-		])
-		.range([height, 0])
-		.nice()
-  
-	  const xAxis = axisBottom(x)
-		.tickSize(-height)
-		.tickValues(
-		  wide
-			.map((d, i) =>
-			  i % (Math.round(wide.length / 5) + 1) == 0 ? d.date : null
+		}
+
+		function stackedBar() {
+			const pathToSubgroupField = cfg.subgroupField
+			const subgroups = lodash.uniq(data.map((d) => lodash.get(d, pathToSubgroupField)))
+
+			const wide = Array.from(group(data, (d) => d.date)).map((d) => {
+				const newVal = {
+					date: d[0],
+				}
+				d[1].forEach((d) => {
+					Object.assign(newVal, {
+						[lodash.get(d, pathToSubgroupField)]: lodash.get(d, pathToYField),
+					})
+				})
+				subgroups.forEach((name) => {
+					if (!(name in newVal)) {
+						Object.assign(newVal, { [name]: 0 })
+					}
+				})
+
+				return newVal
+			})
+
+			dt = {
+				ms:
+					(wide[wide.length - 1].date - wide[0].date) /
+					(wide.length > 2 ? wide.length - 2 : wide.length),
+				s:
+					(wide[wide.length - 1].date - wide[0].date) /
+					(wide.length > 2 ? wide.length - 2 : wide.length) /
+					1000,
+				min:
+					(wide[wide.length - 1].date - wide[0].date) /
+					(wide.length > 2 ? wide.length - 2 : wide.length) /
+					(1000 * 60),
+				h:
+					(wide[wide.length - 1].date - wide[0].date) /
+					(wide.length > 2 ? wide.length - 2 : wide.length) /
+					(1000 * 60 * 60),
+				d:
+					(wide[wide.length - 1].date - wide[0].date) /
+					(wide.length > 2 ? wide.length - 2 : wide.length) /
+					(1000 * 60 * 60 * 24),
+				m:
+					(wide[wide.length - 1].date - wide[0].date) /
+					(wide.length > 2 ? wide.length - 2 : wide.length) /
+					(1000 * 60 * 60 * 24 * 30),
+				y:
+					(wide[wide.length - 1].date - wide[0].date) /
+					(wide.length > 2 ? wide.length - 2 : wide.length) /
+					(1000 * 60 * 60 * 24 * 365),
+			}
+
+			tickByNumber =
+				dt.s < 1
+					? 0
+					: dt.min < 1
+						? 1
+						: dt.hour < 1
+							? 2
+							: dt.d < 1
+								? 3
+								: dt.m < 1
+									? 4
+									: dt.y < 1
+										? 5
+										: 6
+
+			const groups = wide.map((d) => d.date)
+
+			const color = ordinal(category10)
+
+			const stackedData = stack().keys(subgroups)(wide)
+
+			stackedData.forEach((layer) => {
+				layer.forEach((a) => {
+					a.key = layer.key
+				})
+			})
+
+			const yMax = max_max(
+				wide.map((d) => {
+					let acc = 0
+					for (let k in d) {
+						if (typeof d[k] !== 'object') {
+							acc += d[k]
+						}
+					}
+					return acc
+				})
 			)
-			.filter((d) => !!d)
-		)
-		.tickFormat((date) => {
-		  return tickByNumber == 6
-			? timeFormat('%Y')(date)
-			: tickByNumber == 5
-			? timeFormat('%m/%y')(date)
-			: tickByNumber == 4
-			? timeFormat('%d/%m/%y')(date)
-			: tickByNumber == 3
-			? timeFormat('%H %d%/%m/%y')(date)
-			: tickByNumber == 2
-			? timeFormat('%H:%M %d%/%m/%y')(date)
-			: timeFormat('%H:%M:%S %d%/%m/%y')(date)
-		})
-	  const yAxis = axisLeft(y).tickSize(-width)
-  
-	  const xAxisGrid = svg
-		.append('g')
-		.call(xAxis)
-		.attr('transform', 'translate(0,' + height + ')')
-	  xAxisGrid.selectAll('.tick text').attr('transform', 'translate(0, 5)')
-	  const yAxisGrid = svg.append('g').call(yAxis)
-	  yAxisGrid.selectAll('line').attr('class', 'y-axis-grid')
-  
-	  var clip = svg
-		.append('defs')
-		.append('svg:clipPath')
-		.attr('id', 'clip')
-		.append('svg:rect')
-		.attr('width', width)
-		.attr('height', height)
-		.attr('x', 0)
-		.attr('y', 0)
-  
-	  var brush = brushX()
-		.extent([
-		  [0, 0],
-		  [width, height],
-		])
-		.on('end', updateChart)
-	  svg.append('g').attr('class', 'brush').call(brush)
-  
-	  let barsLayers = svg
-		.append('g')
-		.attr('clip-path', 'url(#clip)')
-		.attr('class', 'bars')
-  
-	  let bars = barsLayers
-		.selectAll('g')
-		.data(stackedData)
-		.join('g')
-		.attr('fill', (d) => color(d.key))
-	  bars
-		.selectAll('rect')
-		.data((d) => d)
-		.enter()
-		.append('rect')
-		.attr('x', (d) => x(d.data.date))
-		.attr('width', x.bandwidth())
-		.attr('y', (d) => y(d[1]))
-		.attr('height', (d) => y(d[0]) - y(d[1]))
-		.attr('class', 'bar')
-		.attr('pointer-events', 'all')
-		.on('mouseover', mouseover)
-		.on('mousemove', mousemove)
-		.on('mouseout', mouseout)
-  
-	  svg
-		.append('text')
-		.attr(
-		  'transform',
-		  'translate(' + width / 2 + ' ,' + (height + margin.top + 20) + ')'
-		)
-		.style('text-anchor', 'middle')
-		.attr('font-family', 'Nunito, Arial, sans-serif')
-		.style('font-size', '12')
-		.text(pathToDate)
-	  svg
-		.append('text')
-		.attr('transform', 'rotate(-90)')
-		.attr('y', 0 - margin.left)
-		.attr('x', 0 - height / 2)
-		.attr('dy', '1em')
-		.style('text-anchor', 'middle')
-		.attr('font-family', 'Nunito, Arial, sans-serif')
-		.style('font-size', '12')
-		.text(pathToYField)
-  
-	  const tooltip = src_select('body')
-		.append('div')
-		.attr('class', 'tooltip')
-		.style('display', 'none')
-	  function mouseover() {
-		src_select(this).attr('stroke', 'black').attr('stroke-width', 0.6)
-		tooltip.style('display', null).style('visibility', 'visible')
-	  }
-	  function mousemove(e, d) {
-		tooltip.html(
-		  `<ul>
-					  <li>Date: ${
-			  tickByNumber == 6
-				? timeFormat('%Y')(d.data.date)
-				: tickByNumber == 5
-				? timeFormat('%m/%y')(d.data.date)
-				: tickByNumber == 4
-				? timeFormat('%d/%m/%y')(d.data.date)
-				: tickByNumber == 3
-				? timeFormat('%H %d%/%m/%y')(d.data.date)
-				: tickByNumber == 2
-				? timeFormat('%H:%M %d%/%m/%y')(d.data.date)
-				: timeFormat('%H:%M:%S %d%/%m/%y')(d.data.date)
-			}</li>
-						  ${
-				d.key
-				  ? `<li>Subgroup: ${
-					  d.key && d.key.replace(/</g, '&lt;').replace(/>/g, '&gt;')
-					}</li>`
-				  : ''
-			  }
+
+			let svg = src_select(`#${selector}`)
+				.append('svg')
+				.attr('width', width + margin.left + margin.right)
+				.attr('height', height + margin.top + margin.bottom)
+				.append('g')
+				.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
+
+			const x = band()
+				.domain(
+					wide.map(function (d) {
+						return d.date
+					})
+				)
+				.range([0, width])
+				.paddingInner(0.1)
+
+			const y = linear_linear()
+				.domain([
+					0,
+					max_max(
+						wide.map((d) => {
+							let acc = 0
+							for (let k in d) {
+								if (typeof d[k] !== 'object') {
+									acc += d[k]
+								}
+							}
+							return acc
+						})
+					),
+				])
+				.range([height, 0])
+				.nice()
+
+			const xAxis = axisBottom(x)
+				.tickSize(-height)
+				.tickValues(
+					wide
+						.map((d, i) =>
+							i % (Math.round(wide.length / 5) + 1) == 0 ? d.date : null
+						)
+						.filter((d) => !!d)
+				)
+				.tickFormat((date) => {
+					return tickByNumber == 6
+						? timeFormat('%Y')(date)
+						: tickByNumber == 5
+							? timeFormat('%m/%y')(date)
+							: tickByNumber == 4
+								? timeFormat('%d/%m/%y')(date)
+								: tickByNumber == 3
+									? timeFormat('%H %d%/%m/%y')(date)
+									: tickByNumber == 2
+										? timeFormat('%H:%M %d%/%m/%y')(date)
+										: timeFormat('%H:%M:%S %d%/%m/%y')(date)
+				})
+			const yAxis = axisLeft(y).tickSize(-width)
+
+			const xAxisGrid = svg
+				.append('g')
+				.call(xAxis)
+				.attr('transform', 'translate(0,' + height + ')')
+			xAxisGrid.selectAll('.tick text').attr('transform', 'translate(0, 5)')
+			const yAxisGrid = svg.append('g').call(yAxis)
+			yAxisGrid.selectAll('line').attr('class', 'y-axis-grid')
+
+			var clip = svg
+				.append('defs')
+				.append('svg:clipPath')
+				.attr('id', 'clip')
+				.append('svg:rect')
+				.attr('width', width)
+				.attr('height', height)
+				.attr('x', 0)
+				.attr('y', 0)
+
+			var brush = brushX()
+				.extent([
+					[0, 0],
+					[width, height],
+				])
+				.on('end', updateChart)
+			svg.append('g').attr('class', 'brush').call(brush)
+
+			let barsLayers = svg
+				.append('g')
+				.attr('clip-path', 'url(#clip)')
+				.attr('class', 'bars')
+
+			let bars = barsLayers
+				.selectAll('g')
+				.data(stackedData)
+				.join('g')
+				.attr('fill', (d) => color(d.key))
+			bars
+				.selectAll('rect')
+				.data((d) => d)
+				.enter()
+				.append('rect')
+				.attr('x', (d) => x(d.data.date))
+				.attr('width', x.bandwidth())
+				.attr('y', (d) => y(d[1]))
+				.attr('height', (d) => y(d[0]) - y(d[1]))
+				.attr('class', 'bar')
+				.attr('pointer-events', 'all')
+				.on('mouseover', mouseover)
+				.on('mousemove', mousemove)
+				.on('mouseout', mouseout)
+
+			svg
+				.append('text')
+				.attr(
+					'transform',
+					'translate(' + width / 2 + ' ,' + (height + margin.top + 20) + ')'
+				)
+				.style('text-anchor', 'middle')
+				.attr('font-family', 'Nunito, Arial, sans-serif')
+				.style('font-size', '12')
+				.text(pathToDate)
+			svg
+				.append('text')
+				.attr('transform', 'rotate(-90)')
+				.attr('y', 0 - margin.left)
+				.attr('x', 0 - height / 2)
+				.attr('dy', '1em')
+				.style('text-anchor', 'middle')
+				.attr('font-family', 'Nunito, Arial, sans-serif')
+				.style('font-size', '12')
+				.text(pathToYField)
+
+			const tooltip = src_select('body')
+				.append('div')
+				.attr('class', 'tooltip')
+				.style('display', 'none')
+			function mouseover() {
+				src_select(this).attr('stroke', 'black').attr('stroke-width', 0.6)
+				tooltip.style('display', null).style('visibility', 'visible')
+			}
+			function mousemove(e, d) {
+				tooltip.html(
+					`<ul>
+					  <li>Date: ${tickByNumber == 6
+						? timeFormat('%Y')(d.data.date)
+						: tickByNumber == 5
+							? timeFormat('%m/%y')(d.data.date)
+							: tickByNumber == 4
+								? timeFormat('%d/%m/%y')(d.data.date)
+								: tickByNumber == 3
+									? timeFormat('%H %d%/%m/%y')(d.data.date)
+									: tickByNumber == 2
+										? timeFormat('%H:%M %d%/%m/%y')(d.data.date)
+										: timeFormat('%H:%M:%S %d%/%m/%y')(d.data.date)
+					}</li>
+						  ${d.key
+						? `<li>Subgroup: ${d.key && d.key.replace(/</g, '&lt;').replace(/>/g, '&gt;')
+						}</li>`
+						: ''
+					}
 						  <li>${pathToYField}: ${formatNumber(d[1] - d[0])}</li>
 					  </ul>`
-		)
-  
-		const bodyWidth = src_select('body').style('width').slice(0, -2)
-		const tooltipheight = e.pageY - tooltip.style('height').slice(0, -2) - 10
-		const tooltipWidth = tooltip.style('width').slice(0, -2)
-		const tooltipX =
-		  e.pageX < tooltipWidth / 2
-			? 0
-			: e.pageX + tooltipWidth / 2 > bodyWidth
-			? bodyWidth - tooltipWidth
-			: e.pageX - tooltipWidth / 2
-  
-		tooltip.style('top', tooltipheight + 'px').style('left', tooltipX + 'px')
-	  }
-	  function mouseout() {
-		tooltip.style('display', 'none').style('visibility', null)
-		src_select(this).attr('stroke', 'none')
-	  }
-  
-	  function updateChart(event) {
-		const extent = event.selection
-  
-		var idleTimeout
-		function idled() {
-		  idleTimeout = null
-		}
-  
-		let newData
-  
-		if (!extent) {
-		  if (!idleTimeout) return (idleTimeout = setTimeout(idled, 350))
-		  x.domain([4, 8])
-		} else {
-		  svg.select('.brush').call(brush.move, null)
-  
-		  newData = wide
-			.map((d, i) => {
-			  const pos = x(d.date)
-			  if (pos > extent[0] && pos < extent[1]) {
-				return d
-			  } else {
-				return null
-			  }
-			})
-			.filter((d) => !!d)
-  
-		  x.domain(newData.map((d) => d.date))
-		}
-		y.domain([
-		  0,
-		  max_max(
-			newData.map((d) => {
-			  let acc = 0
-			  for (let k in d) {
-				if (typeof d[k] !== 'object') {
-				  acc += d[k]
+				)
+
+				const bodyWidth = src_select('body').style('width').slice(0, -2)
+				const tooltipheight = e.pageY - tooltip.style('height').slice(0, -2) - 10
+				const tooltipWidth = tooltip.style('width').slice(0, -2)
+				const tooltipX =
+					e.pageX < tooltipWidth / 2
+						? 0
+						: e.pageX + tooltipWidth / 2 > bodyWidth
+							? bodyWidth - tooltipWidth
+							: e.pageX - tooltipWidth / 2
+
+				tooltip.style('top', tooltipheight + 'px').style('left', tooltipX + 'px')
+			}
+			function mouseout() {
+				tooltip.style('display', 'none').style('visibility', null)
+				src_select(this).attr('stroke', 'none')
+			}
+
+			function updateChart(event) {
+				const extent = event.selection
+
+				var idleTimeout
+				function idled() {
+					idleTimeout = null
 				}
-			  }
-			  return acc
-			})
-		  ),
-		]).nice()
-  
-		xAxis.tickValues(
-		  newData
-			.map((d, i) =>
-			  i % (Math.round(newData.length / 5) + 1) == 0 ||
-			  i == newData.length - 1
-				? d.date
-				: null
-			)
-			.filter((d) => !!d)
-		)
-		xAxisGrid.transition().duration(1000).call(xAxis)
-		xAxisGrid.selectAll('.tick text').attr('transform', 'translate(0, 5)')
-		yAxisGrid.transition().duration(1000).call(yAxis)
-  
-		bars.selectAll('rect').style('display', function (d) {
-		  const max = max_max(x.domain())
-		  const min = min_min(x.domain())
-		  if (d.data.date >= min && d.data.date <= max) {
-			return null
-		  } else {
-			return 'none'
-		  }
-		})
-		bars
-		  .selectAll('rect')
-		  .transition()
-		  .duration(1000)
-		  .attr('x', (d) => x(d.data.date))
-		  .attr('width', x.bandwidth())
-		  .attr('y', (d) => y(d[1]))
-		  .attr('height', (d) => y(d[0]) - y(d[1]))
-	  }
-  
-	  svg.on('dblclick', function () {
-		x.domain(
-		  wide.map(function (d) {
-			return d.date
-		  })
-		)
-  
-		y.domain([
-		  0,
-		  max_max(
-			wide.map((d) => {
-			  let acc = 0
-			  for (let k in d) {
-				if (typeof d[k] !== 'object') {
-				  acc += d[k]
+
+				let newData
+
+				if (!extent) {
+					if (!idleTimeout) return (idleTimeout = setTimeout(idled, 350))
+					x.domain([4, 8])
+				} else {
+					svg.select('.brush').call(brush.move, null)
+
+					newData = wide
+						.map((d, i) => {
+							const pos = x(d.date)
+							if (pos > extent[0] && pos < extent[1]) {
+								return d
+							} else {
+								return null
+							}
+						})
+						.filter((d) => !!d)
+
+					x.domain(newData.map((d) => d.date))
 				}
-			  }
-			  return acc
+				y.domain([
+					0,
+					max_max(
+						newData.map((d) => {
+							let acc = 0
+							for (let k in d) {
+								if (typeof d[k] !== 'object') {
+									acc += d[k]
+								}
+							}
+							return acc
+						})
+					),
+				]).nice()
+
+				xAxis.tickValues(
+					newData
+						.map((d, i) =>
+							i % (Math.round(newData.length / 5) + 1) == 0 ||
+								i == newData.length - 1
+								? d.date
+								: null
+						)
+						.filter((d) => !!d)
+				)
+				xAxisGrid.transition().duration(1000).call(xAxis)
+				xAxisGrid.selectAll('.tick text').attr('transform', 'translate(0, 5)')
+				yAxisGrid.transition().duration(1000).call(yAxis)
+
+				bars.selectAll('rect').style('display', function (d) {
+					const max = max_max(x.domain())
+					const min = min_min(x.domain())
+					if (d.data.date >= min && d.data.date <= max) {
+						return null
+					} else {
+						return 'none'
+					}
+				})
+				bars
+					.selectAll('rect')
+					.transition()
+					.duration(1000)
+					.attr('x', (d) => x(d.data.date))
+					.attr('width', x.bandwidth())
+					.attr('y', (d) => y(d[1]))
+					.attr('height', (d) => y(d[0]) - y(d[1]))
+			}
+
+			svg.on('dblclick', function () {
+				x.domain(
+					wide.map(function (d) {
+						return d.date
+					})
+				)
+
+				y.domain([
+					0,
+					max_max(
+						wide.map((d) => {
+							let acc = 0
+							for (let k in d) {
+								if (typeof d[k] !== 'object') {
+									acc += d[k]
+								}
+							}
+							return acc
+						})
+					),
+				]).nice()
+				xAxis.tickValues(
+					wide
+						.map((d, i) =>
+							i % (Math.round(wide.length / 5) + 1) == 0 ? d.date : null
+						)
+						.filter((d) => !!d)
+				)
+				xAxisGrid.transition().call(xAxis)
+				xAxisGrid.selectAll('.tick text').attr('transform', 'translate(0, 5)')
+				yAxisGrid.transition().call(yAxis)
+
+				bars
+					.selectAll('.bar')
+					.transition()
+					.style('display', null)
+					.attr('x', (d) => x(d.data.date))
+					.attr('width', x.bandwidth())
+					.attr('y', (d) => y(d[1]))
+					.attr('height', (d) => y(d[0]) - y(d[1]))
 			})
-		  ),
-		]).nice()
-		xAxis.tickValues(
-		  wide
-			.map((d, i) =>
-			  i % (Math.round(wide.length / 5) + 1) == 0 ? d.date : null
-			)
-			.filter((d) => !!d)
-		)
-		xAxisGrid.transition().call(xAxis)
-		xAxisGrid.selectAll('.tick text').attr('transform', 'translate(0, 5)')
-		yAxisGrid.transition().call(yAxis)
-  
-		bars
-		  .selectAll('.bar')
-		  .transition()
-		  .style('display', null)
-		  .attr('x', (d) => x(d.data.date))
-		  .attr('width', x.bandwidth())
-		  .attr('y', (d) => y(d[1]))
-		  .attr('height', (d) => y(d[0]) - y(d[1]))
-	  })
-	}
-  }
+		}
+}
 
-window.timeChartRenderer = timeChart
+window.timeChartRenderer = timeChartRenderer
 
-})();
 
-/******/ 	return __webpack_exports__;
+/***/ })
+
+/******/ 	});
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	var __webpack_module_cache__ = {};
+/******/ 	
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		if(__webpack_module_cache__[moduleId]) {
+/******/ 			return __webpack_module_cache__[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = __webpack_module_cache__[moduleId] = {
+/******/ 			id: moduleId,
+/******/ 			loaded: false,
+/******/ 			exports: {}
+/******/ 		};
+/******/ 	
+/******/ 		// Execute the module function
+/******/ 		__webpack_modules__[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/ 	
+/******/ 		// Flag the module as loaded
+/******/ 		module.loaded = true;
+/******/ 	
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/ 	
+/************************************************************************/
+/******/ 	/* webpack/runtime/compat get default export */
+/******/ 	(() => {
+/******/ 		// getDefaultExport function for compatibility with non-harmony modules
+/******/ 		__webpack_require__.n = (module) => {
+/******/ 			var getter = module && module.__esModule ?
+/******/ 				() => module['default'] :
+/******/ 				() => module;
+/******/ 			__webpack_require__.d(getter, { a: getter });
+/******/ 			return getter;
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	(() => {
+/******/ 		// define getter functions for harmony exports
+/******/ 		__webpack_require__.d = (exports, definition) => {
+/******/ 			for(var key in definition) {
+/******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 				}
+/******/ 			}
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/global */
+/******/ 	(() => {
+/******/ 		__webpack_require__.g = (function() {
+/******/ 			if (typeof globalThis === 'object') return globalThis;
+/******/ 			try {
+/******/ 				return this || new Function('return this')();
+/******/ 			} catch (e) {
+/******/ 				if (typeof window === 'object') return window;
+/******/ 			}
+/******/ 		})();
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	(() => {
+/******/ 		__webpack_require__.o = (obj, prop) => Object.prototype.hasOwnProperty.call(obj, prop)
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	(() => {
+/******/ 		// define __esModule on exports
+/******/ 		__webpack_require__.r = (exports) => {
+/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/node module decorator */
+/******/ 	(() => {
+/******/ 		__webpack_require__.nmd = (module) => {
+/******/ 			module.paths = [];
+/******/ 			if (!module.children) module.children = [];
+/******/ 			return module;
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/************************************************************************/
+/******/ 	// module exports must be returned from runtime so entry inlining is disabled
+/******/ 	// startup
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(1792);
 /******/ })()
 ;
 });
